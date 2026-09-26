@@ -5,7 +5,9 @@ This guide follows the slides "Creating droplet on Digital Ocean" to "Connect to
 **Before you start**
 
 - Run the commands in the terminal in Positron. On Windows this is PowerShell, on macOS it is zsh. All commands in this guide work in both unless stated otherwise.
-- Replace `<DROPLET_IP>` with the IP address of your droplet, **including the `<` and `>`**. You find the IP address on the "Droplets" page on DigitalOcean. Example: `ssh root@<DROPLET_IP>` becomes `ssh root@203.0.113.10`.
+- Replace `<DROPLET_IP>` with the IP address of your droplet, **including the `<` and `>`**. You find the IP address on the "Droplets" page on DigitalOcean (marked in red below). Example: `ssh root@<DROPLET_IP>` becomes `ssh root@64.226.114.147`.
+
+![The IP address of a droplet on the Droplets page on DigitalOcean](images/droplet_ip.png)
 
 ## Table of Contents
 
@@ -91,7 +93,7 @@ The key pair is now in your `.ssh` folder:
 
 ## 5. Log in to the droplet using the password
 
-Find the IP address of your droplet on DigitalOcean, and run:
+Find the IP address of your droplet on DigitalOcean (see [the screenshot at the top](#ssh-setup-guide)), and run:
 
 ```bash
 ssh root@<DROPLET_IP>
