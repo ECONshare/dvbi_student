@@ -14,10 +14,9 @@ This guide helps you to create a Droplet on Digital Ocean, and create an SSH con
 4. [Create an SSH key pair](#4-create-an-ssh-key-pair)
 5. [Log in to the droplet using the password](#5-log-in-to-the-droplet-using-the-password)
 6. [Copy the public SSH key to the droplet](#6-copy-the-public-ssh-key-to-the-droplet)
-7. [Provide the public key to DigitalOcean](#7-provide-the-public-key-to-digitalocean)
-8. [Set up the SSH config file](#8-set-up-the-ssh-config-file)
-9. [Connect to the droplet from Positron](#9-connect-to-the-droplet-from-positron)
-10. [Troubleshooting](#10-troubleshooting)
+7. [Set up the SSH config file](#7-set-up-the-ssh-config-file)
+8. [Connect to the droplet from Positron](#8-connect-to-the-droplet-from-positron)
+9. [Troubleshooting](#9-troubleshooting)
 
 ## 1. Create a droplet on DigitalOcean
 
@@ -130,7 +129,7 @@ Enter the droplet password when asked.
 > **What the command does.** It reads your public key on your laptop, sends it to the droplet, and adds it to the file `~/.ssh/authorized_keys`. This is the file where the SSH server on the droplet looks for the public keys that are allowed to log in.
 >
 > <details>
-> <summary>Click to see the command explained step by step</summary>
+> <summary>Click if you want to see the command explained step by step</summary>
 >
 > | Part | What it does |
 > |---|---|
@@ -148,26 +147,9 @@ Enter the droplet password when asked.
 >
 > </details>
 
-## 7. Provide the public key to DigitalOcean
+## 7. Set up the SSH config file
 
-Show your public key in the terminal:
-
-```bash
-cat "$HOME/.ssh/id_ed25519_dvbi.pub"
-```
-
-Copy the whole line it prints (it starts with `ssh-ed25519`). You can also open the file `id_ed25519_dvbi.pub` in a text editor and copy the text from there.
-
-On DigitalOcean, go to "Settings" → "Security" → "Add SSH Key":
-
-1. Paste the key into the "SSH key content" textbox.
-2. Give the SSH key a name, e.g. "For DVBI course".
-
-This registers the public key with DigitalOcean, so it can also be used for other droplets you create.
-
-## 8. Set up the SSH config file
-
-Go to your `.ssh` folder on your laptop and check if you have a file called `config` (no file extension). If not, create it.
+Go to your `.ssh` folder on your laptop and check if you have a file called `config` (no file extension). If not, create it. Alternatively, you can create the file from the Positron terminal:
 
 Windows (PowerShell):
 
@@ -201,15 +183,17 @@ ssh dvbi
 
 Type `exit` to leave the droplet again.
 
-## 9. Connect to the droplet from Positron
+## 8. Connect to the droplet from Positron
 
 1. Open the Command Palette in Positron: `Ctrl+Shift+P` (Windows) or `Cmd+Shift+P` (macOS).
 2. Type `Remote-SSH: Connect to Host` and choose `dvbi`.
+3. A new Positron window opens and connects to the droplet. The first time you connect, Positron installs a server program on the droplet, which can take a minute or two. Working in the new window is like working directly on the droplet: the files you open, the terminal, and the code you run are all on the droplet.
 
-## 10. Troubleshooting
+You can also connect from the Remote Explorer: click the Remote Explorer icon (a monitor) in the bar on the far left of Positron, and click the "Connect to Host in New Window" icon next to `dvbi` (marked in red below). The folders you have opened on the droplet before are listed under `dvbi`, so you can open them again directly.
 
-**The command fails after copying it from the slides.**
-PowerPoint changes straight quotes `"` into curly quotes `“ ”`, which the terminal does not understand. Copy the commands from this page instead.
+![The Connect to Host in New Window icon next to dvbi in the Remote Explorer in Positron](images/remote_explorer.png)
+
+## 9. Troubleshooting
 
 **`Permission denied (publickey)` when running `ssh dvbi`.**
 Check that step 6 ran without errors, and that the `IdentityFile` line in your `config` file points to `~/.ssh/id_ed25519_dvbi` (the private key, without `.pub`).
@@ -217,9 +201,4 @@ Check that step 6 ran without errors, and that the `IdentityFile` line in your `
 **`ssh dvbi` says `Could not resolve hostname dvbi`.**
 SSH cannot find your `config` file. On Windows, check that the file is called `config` and not `config.txt`: Notepad adds `.txt` automatically. In File Explorer, turn on "View" → "Show" → "File name extensions" to see the full file name.
 
-**`WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!`**
-This happens if you destroy a droplet and create a new one that gets the same IP address. Remove the old entry from your laptop and connect again:
 
-```bash
-ssh-keygen -R <DROPLET_IP>
-```
