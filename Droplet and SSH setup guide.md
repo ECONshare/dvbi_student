@@ -197,12 +197,6 @@ You can also connect to the droplet from the Remote Explorer (in your old Positr
 
 ![The Connect to Host in New Window icon next to dvbi in the Remote Explorer in Positron](images/remote_explorer.png)
 
-## 9. Troubleshooting
 
-**`Permission denied (publickey)` when running `ssh dvbi`.**
-Check that step 6 ran without errors, and that the `IdentityFile` line in your `config` file points to `~/.ssh/id_ed25519_dvbi` (the private key, without `.pub`).
-
-**`ssh dvbi` says `Could not resolve hostname dvbi`.**
-SSH cannot find your `config` file. On Windows, check that the file is called `config` and not `config.txt`: Notepad adds `.txt` automatically. In File Explorer, turn on "View" → "Show" → "File name extensions" to see the full file name.
 
 
