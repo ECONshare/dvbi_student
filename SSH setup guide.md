@@ -25,7 +25,10 @@ This guide follows the slides "Creating droplet on Digital Ocean" to "Connect to
 ## 1. Create a droplet on DigitalOcean
 
 1. Create a user on [digitalocean.com](https://www.digitalocean.com/).
-2. Go to "Droplets" and click "Create Droplet".
+2. Click "Create" at the top of the page and choose "Droplet" (marked in red below).
+
+   ![The Create menu on DigitalOcean with Droplet marked](images/create_droplet.png)
+
 3. Choose the following settings:
    - **Region:** Frankfurt
    - **Version:** Ubuntu 22.04 (LTS) x64
