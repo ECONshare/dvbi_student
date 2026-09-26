@@ -49,6 +49,8 @@ Good to know:
 
 SSH (Secure Shell) is a safe way to run shell commands on another machine, e.g. a DigitalOcean droplet. The commands you type on your computer are sent to the droplet, where they run, and the output is sent back to your computer. Everything in both directions travels through one encrypted connection.
 
+![Commands go from your computer, which holds the private key, to the droplet, which holds the public key, and the output comes back through an encrypted SSH connection](images/ssh_diagram.png)
+
 SSH keys come in pairs:
 
 | Key | Where it lives | Share it? |
@@ -188,8 +190,10 @@ Type `exit` to leave the droplet again.
 1. Open the Command Palette in Positron: `Ctrl+Shift+P` (Windows) or `Cmd+Shift+P` (macOS).
 2. Type `Remote-SSH: Connect to Host` and choose `dvbi`.
 3. A new Positron window opens and connects to the droplet. The first time you connect, Positron installs a server program on the droplet, which can take a minute or two. Working in the new window is like working directly on the droplet: the files you open, the terminal, and the code you run are all on the droplet.
+4. Click the Explorer icon (the top icon in the bar on the far left) in the new Positron window and click "Open Folder". Choose `/root/`, which is your home folder on the droplet, and click "OK".
+5. If Positron asks "Do you trust the authors of the files in this folder?", click "Yes, I trust the authors". If you instead see a "Restricted Mode" banner at the top of the window, click "Manage" and then "Trust". In Restricted Mode, some features of Positron are turned off. It is safe to trust the folder, because it is on your own droplet.
 
-You can also connect from the Remote Explorer: click the Remote Explorer icon (a monitor) in the bar on the far left of Positron, and click the "Connect to Host in New Window" icon next to `dvbi` (marked in red below). The folders you have opened on the droplet before are listed under `dvbi`, so you can open them again directly.
+You can also connect to the droplet from the Remote Explorer (in your old Positron window): click the Remote Explorer icon (a monitor) in the bar on the far left of Positron, and click the "Connect to Host in New Window" icon next to `dvbi` (marked in red below). The folders you have opened on the droplet before are listed under `dvbi`, so you can open them again directly.
 
 ![The Connect to Host in New Window icon next to dvbi in the Remote Explorer in Positron](images/remote_explorer.png)
 
