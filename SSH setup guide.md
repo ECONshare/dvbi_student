@@ -1,13 +1,10 @@
 # SSH setup guide
 
-This guide follows the slides "Creating droplet on Digital Ocean" to "Connect to the droplet from your laptop" in the slideset "1. Introduction". Use this page when you need to copy commands: the code blocks below can be copied directly (use the copy button in the top right corner of each block on GitHub).
+This guide helps you to create a Droplet on Digital Ocean, and create an SSH connection from Positron to the Droplet.
 
 **Before you start**
 
-- Run the commands in the terminal in Positron. On Windows this is PowerShell, on macOS it is zsh. All commands in this guide work in both unless stated otherwise.
-- Replace `<DROPLET_IP>` with the IP address of your droplet, **including the `<` and `>`**. You find the IP address on the "Droplets" page on DigitalOcean (marked in red below). Example: `ssh root@<DROPLET_IP>` becomes `ssh root@64.226.114.147`.
-
-![The IP address of a droplet on the Droplets page on DigitalOcean](images/droplet_ip.png)
+- Terminal commands are to be run from the terminal in Positron.
 
 ## Table of Contents
 
@@ -46,14 +43,14 @@ Good to know:
 
 - Choose "Insights" to see the resources used by the droplet. The bottleneck will most likely be the memory (RAM).
 - If you need more resources: "Settings" → "Resize". Larger droplets cost extra, and you **cannot decrease** the droplet size again.
-- Click the "Web console" button to access the command line of your Linux virtual machine (VM) directly in the browser.
+- Click the "Web console" button to access the command line of your Linux virtual machine (VM) directly in the browser (but we will instead connect with SSH using Positron).
 - To destroy (delete) the droplet: "Settings" → scroll to the bottom to find the "Destroy" button.
 
 ## 3. What is SSH?
 
 SSH (Secure Shell) is a safe way to run shell commands on another machine, e.g. a DigitalOcean droplet. The commands you type on your computer are sent to the droplet, where they run, and the output is sent back to your computer. Everything in both directions travels through one encrypted connection.
 
-We want to log in with SSH keys. SSH keys come in pairs:
+SSH keys come in pairs:
 
 | Key | Where it lives | Share it? |
 |---|---|---|
@@ -64,7 +61,7 @@ When you connect, your private key proves who you are to the droplet, which chec
 
 ## 4. Create an SSH key pair
 
-If you do not have a `.ssh` folder in your home folder, create it first.
+If you do not have a `.ssh` folder in your home folder, create it first (you can use the commands below in your Positron terminal).
 
 Windows (PowerShell):
 
@@ -96,7 +93,11 @@ The key pair is now in your `.ssh` folder:
 
 ## 5. Log in to the droplet using the password
 
-Find the IP address of your droplet on DigitalOcean (see [the screenshot at the top](#ssh-setup-guide)), and run:
+You find the IP address of your droplet on the "Droplets" page on DigitalOcean (marked in red below).
+
+![The IP address of a droplet on the Droplets page on DigitalOcean](images/droplet_ip.png)
+
+Replace `<DROPLET_IP>` with the IP address of your droplet, **including the `<` and `>`**, here and in the rest of this guide. Example: `ssh root@<DROPLET_IP>` becomes `ssh root@64.226.114.147`. Run:
 
 ```bash
 ssh root@<DROPLET_IP>
@@ -105,9 +106,19 @@ ssh root@<DROPLET_IP>
 - If you are asked whether to trust the server, answer `yes`.
 - Type the password of your droplet. **The password is hidden while you type**, so you will not see any characters. Just type it and press Enter.
 
+You are now logged in: the terminal shows the prompt `root@<DROPLET_NAME>:~#` (e.g. `root@dvbi2026:~#`), and the commands you type now run on the droplet, not on your local computer.
+
 ## 6. Copy the public SSH key to the droplet
 
-Open a **new local terminal** (click the small "+" in the terminal panel in Positron). This command must run on your laptop, not inside the droplet from step 5.
+Open a **new local terminal** by clicking the small "+" in the terminal panel in Positron (marked in red below). The next command copies your public key from your laptop to the droplet, so it must run on your laptop, not in the droplet terminal from step 5.
+
+![The + button for a new terminal in the terminal panel in Positron](images/new_terminal.png)
+
+You now have two terminals open in Positron. They are listed on the right side of the terminal panel (see below), and you switch between them by clicking them. The "ssh" terminal runs commands on your droplet, and the "powershell" terminal (called "zsh" on macOS) runs commands on your laptop.
+
+![The ssh terminal and the local powershell terminal listed in the terminal panel in Positron](images/terminal_list.png)
+
+In the local terminal, run this command to copy your public key to the droplet:
 
 ```bash
 cat "$HOME/.ssh/id_ed25519_dvbi.pub" | ssh root@<DROPLET_IP> "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
@@ -115,16 +126,27 @@ cat "$HOME/.ssh/id_ed25519_dvbi.pub" | ssh root@<DROPLET_IP> "mkdir -p ~/.ssh &&
 
 Enter the droplet password when asked.
 
-This copies the public key from your laptop to the droplet and adds it as an authorized key. Step by step:
-
-| Part | What it does |
-|---|---|
-| `cat "$HOME/.ssh/id_ed25519_dvbi.pub"` | Reads your public key on your laptop |
-| `\| ssh root@<DROPLET_IP> "..."` | Sends it to the droplet and runs the command in quotes there |
-| `mkdir -p ~/.ssh` | Creates the `.ssh` folder on the droplet if it does not exist |
-| `chmod 700 ~/.ssh` | Only you can access the folder |
-| `cat >> ~/.ssh/authorized_keys` | Appends your public key to the list of keys allowed to log in |
-| `chmod 600 ~/.ssh/authorized_keys` | Only you can read and write the file |
+> [!NOTE]
+> **What the command does.** It reads your public key on your laptop, sends it to the droplet, and adds it to the file `~/.ssh/authorized_keys`. This is the file where the SSH server on the droplet looks for the public keys that are allowed to log in.
+>
+> <details>
+> <summary>Click to see the command explained step by step</summary>
+>
+> | Part | What it does |
+> |---|---|
+> | `$HOME` | Your home folder on your laptop, e.g. `C:\Users\<username>` on Windows or `/Users/<username>` on macOS |
+> | `cat "$HOME/.ssh/id_ed25519_dvbi.pub"` | Prints the content of your public key file |
+> | `\|` | The pipe: sends the output of the command on the left as input to the command on the right |
+> | `ssh root@<DROPLET_IP> "..."` | Logs in to the droplet and runs the commands in quotes there. Everything in the quotes runs on the droplet (Linux), also if your laptop runs Windows |
+> | `&&` | Runs the next command only if the previous one succeeded |
+> | `mkdir -p ~/.ssh` | Creates the `.ssh` folder in your home folder on the droplet (`~` is your home folder, which is `/root` when you log in as `root`). `-p` means: no error if the folder already exists |
+> | `chmod 700 ~/.ssh` | Sets the permissions of the folder, so only you (the owner) can read, write and open it. The three digits are the permissions for the owner, the group and everyone else: 7 = all permissions, 0 = none |
+> | `cat >> ~/.ssh/authorized_keys` | `cat` takes the key it receives from your laptop, and `>>` adds it to the end of `authorized_keys`. The file is created if it does not exist, and keys already in it are kept |
+> | `chmod 600 ~/.ssh/authorized_keys` | Only you can read and write the file (6 = read and write) |
+>
+> The permissions matter: SSH refuses to use the keys if other users can change the folder or the file.
+>
+> </details>
 
 ## 7. Provide the public key to DigitalOcean
 
