@@ -1,269 +1,70 @@
-# Docker Commands Overview
+# Basic Docker Commands
 
-This document provides an overview of basic Docker commands. Each command is accompanied by a brief description and a small example. The commands are categorized based on their purpose.
+The Docker commands from the Docker I and Docker II slides, with the names we use in the course. See the slides for the details.
 
-## Table of Contents
+## Install Docker
 
-1. [Installing Docker](#installing-docker)
-2. [Container Management](#container-management)
-3. [Volume Management](#volume-management)
-4. [Network Management](#network-management)
-5. [Images](#images)
-6. [.tar files](#.tar-files)
-7. [Dockerfile Example for RStudio Setup](#dockerfile-example-for-rStudio-setup)
+| Command | What it does |
+|---|---|
+| `curl -fsSL https://get.docker.com \| sh` | Installs Docker on the droplet |
+| `docker run hello-world` | Checks the installation: prints "Hello from Docker!" |
 
----
+## Containers
 
-## Installing Docker
+| Command | What it does |
+|---|---|
+| `docker run -dit --name python -v data:/data astral/uv:python3.14-trixie-slim bash` | Runs the python container in the background, with the volume `data` at `/data` |
+| `docker run -d --name dash -p 8050:8050 -e HOST=0.0.0.0 -v app_data:/app astral/uv:python3.14-trixie-slim uv run --with dash --with pandas /app/app.py` | Runs the Dash app on port 8050 of the droplet |
+| `docker run -p 5432:5432 --name postgres -e POSTGRES_PASSWORD=ThisIs4ThePassword -e POSTGRES_USER=postgres -d -v postgres_data:/var/lib/postgresql postgres` | Runs the PostgreSQL database on port 5432 (choose your own password) |
+| `docker ps` | Lists the running containers |
+| `docker ps -a` | Lists all containers, also the stopped ones |
+| `docker exec -it python bash` | Opens a terminal in the container (leave it with `exit`) |
+| `docker exec python cat /data/volume.txt` | Runs one command in the container without entering it |
+| `docker logs dash` | Shows the output of the container |
+| `docker stop python` | Stops the container |
+| `docker start python` | Starts a stopped container |
+| `docker restart python` | Stops and starts the container |
+| `docker pause python` | Freezes the container |
+| `docker unpause python` | Unfreezes the container |
+| `docker rm python` | Removes a stopped container (`docker remove` does the same) |
+| `docker rm -f python` | Stops and removes the container |
+| `docker help ps` | Shows the help for a command (`docker help` lists all commands) |
 
-These commands are used for installing Docker on Ubuntu-based systems. It is not essential to understand these in detail, we just need them to get Docker up and running.
-You can just copy the entire code-block below into the Ubuntu terminal (remember to right click and then select paste - do not use Ctrl+v), and then press enter. 
-Answer Y to all prompts, and press Enter when purple screens appear.
+## Images
 
-```bash
-sudo apt install gnome-terminal
-sudo apt-get update
-sudo apt-get install ca-certificates curl gnupg
-sudo install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-sudo chmod a+r /etc/apt/keyrings/docker.gpg
-echo "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo docker run hello-world
-```
+| Command | What it does |
+|---|---|
+| `docker pull astral/uv:python3.14-trixie-slim` | Downloads an image without creating a container |
+| `docker image ls` | Lists the images on the droplet |
+| `docker rmi hello-world:latest` | Removes an image: give the tag, and remove its containers first |
+| `docker image build --tag python:1.0.0 -f dockerfile_python .` | Builds the image `python:1.0.0` from the Dockerfile `dockerfile_python` in the current folder |
+| `docker run -dit --name python --network dvbi_network -v data:/data python:1.0.0 bash` | Runs the python container from your own image, connected to `dvbi_network` |
+| `docker image prune` | Removes dangling images (images without a tag) |
 
-The installation is successful if you get a message beginning with: "Hello from Docker". 
+## Volumes
 
-## Docker Commands Overview
+| Command | What it does |
+|---|---|
+| `docker volume create data` | Creates the volume `data` |
+| `docker volume ls` | Lists the volumes |
+| `chmod o+rw /var/lib/docker/volumes/data/_data` | Lets other users than root read and write in the folder of the volume |
 
-### Container Management
----
-#### `docker ps`
-Lists currently running containers.
-```bash
-docker ps
-```
----
-#### `docker ps -a`
-Lists all containers, including the stopped and paused ones.
-```bash
-docker ps -a
-```
----
-#### `docker help`
-Displays help messages for Docker commands.
+## Networks
 
-**General Syntax**
-```bash
-docker help [COMMAND]
-```
-**Example**
-```bash
-docker help ps
-```
----
-#### `docker run`
-Runs a Docker container.
-**General Syntax**
+| Command | What it does |
+|---|---|
+| `docker network ls` | Lists the networks |
+| `docker network create --driver bridge --attachable --scope local --subnet 10.0.42.0/24 --ip-range 10.0.42.128/25 dvbi_network` | Creates the network `dvbi_network` |
+| `docker network connect dvbi_network python` | Connects the container `python` to the network |
+| `docker network inspect dvbi_network` | Shows the network, with the IP address of each container |
 
-```bash
-docker run [OPTIONS] IMAGE [COMMAND] [ARG...]
-```
-**Example**
-```bash
-docker run -d -p 8787:8787 -e PASSWORD=au_dm_dv_student! --name rstudio -v rstudio_data:/home/rstudio rocker/rstudio
-```
----
-#### `docker exec`
-Executes commands in a running container.
+## Docker Compose
 
-**General Syntax**
-```bash
-docker exec [OPTIONS] CONTAINER COMMAND [ARG...]
-```
-**Example**
-```bash
-docker exec -it rstudio /bin/bash
-```
----
-#### `docker rm`
+Run these in the folder with `compose.yaml` (`cd ~/docker_learn`).
 
-Removes a stopped Docker container.
-
-**General Syntax**
-```bash
-docker rm [CONTAINER]
-```
-**Example**
-```bash
-docker rm rstudio
-```
----
-#### `docker rm -f`
-Forcefully removes a Docker container, even though it is running.
-
-**General Syntax**
-```bash
-docker rm -f [CONTAINER]
-```
-**Example**
-
-```bash
-docker rm -f rstudio
-```
----
-#### `docker pull`
-Pulls an image from a Docker registry.
-```bash
-docker pull rocker/shiny
-```
-### Volume Management
----
-#### `docker volume create`
-Creates a Docker shared volume.
-
-**General Syntax**
-```bash
-docker volume create [OPTIONS] [VOLUME]
-```
-**Example**
-```bash
-docker volume create rstudio_data
-```
----
-#### `docker volume ls`
-Lists all Docker volumes.
-```bash
-docker volume ls
-```
-#### `docker volume inspect`
-Inspect the host location of Docker volumes.
-```bash
-docker volume inspect --format '{{ .Mountpoint }}' $(docker volume ls -q)
-```
-### File Permission
----
-#### `chmod o+rw`
-Changes read and write permissions for 'other' users on a file or directory.
-
-**General Syntax**
-```bash
-chmod o+rw [FILE_OR_DIRECTORY]
-```
-**Example**
-Here we give read and write permission to 'other' users in a shared volume
-```bash
-chmod o+rw /var/lib/docker/volumes/rstudio_data/_data
-```
----
-### Network Management
----
-#### `docker network ls`
-Lists all Docker networks.
-```bash
-docker network ls
-```
----
-#### `docker network create`
-Creates a Docker network.
-
-**General Syntax**
-```bash
-docker network create [OPTIONS] NETWORK
-```
-**Example**
-```bash
-docker network create --driver bridge --attachable --scope local --subnet 10.0.42.0/24 --ip-range 10.0.42.128/25 db_r_shiny
-```
----
-#### `docker network connect`
-Connects a Docker container to a network.
-
-**General Syntax**
-```bash
-docker network connect [NETWORK] [CONTAINER]
-```
-**Example**
-```bash
-docker network connect db_r_shiny rstudio
-```
----
-#### `docker network inspect`
-Inspects a Docker network.
-
-**General Syntax**
-```bash
-docker network inspect [NETWORK]
-```
-**Example**
-```bash
-docker network inspect db_r_shiny
-```
----
-### Images
----
-#### `docker image ls`
-Lists Docker images that are currently stored on the host machine.
-
-**General Syntax**
-```bash
-docker image ls [OPTIONS]
-```
-**Example**
-```bash
-docker image ls
-```
----
-#### `docker rmi`
-Removes one or more Docker images.
-
-**General Syntax**
-```bash
-docker rmi [OPTIONS] IMAGE:TAG
-```
-**Example**
-```bash
-docker rmi rstudio:1.0.0
-```
----
-### .tar files
----
-#### `docker save -o`
-Saves a Docker image to a tar archive.
-
-**General Syntax**
-```bash
-docker save -o [TAR_FILE_NAME] [IMAGE_NAME]:[TAG]
-```
-**Example**
-```bash
-docker save -o rstudio_1_0_0.tar rstudio:1.0.0
-```
----
-#### `docker load -i`
-Loads a Docker image from a tar archive.
-
-**General Syntax**
-```bash
-docker load -i [PATH_TO_TAR_FILE]
-```
-**Example**
-```bash
-docker load -i /path/to/your-image-file.tar
-```
-## Dockerfile Example for RStudio Setup
-```Dockerfile
-# Start from the rocker/rstudio base image which has R and RStudio pre-installed
-FROM rocker/rstudio
-# The RUN command executes shell commands during the image building process.
-RUN apt-get update && apt-get install -y \
-	git
-# Install R packages using R's built-in 'install.packages' function.
-RUN R -e 'install.packages(c("DBI", "RPostgres"))'
-```
-
-
-
-
-
+| Command | What it does |
+|---|---|
+| `docker compose up -d` | Creates and starts all the containers in `compose.yaml` |
+| `docker compose ps` | Lists the containers of the compose file |
+| `docker compose logs postgres` | Shows the output of a service |
+| `docker compose down` | Stops and removes the containers of the compose file |
