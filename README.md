@@ -1,7 +1,7 @@
-# Database Management and Data Visualization
-Code and files related to the course in Database Management and Data Visualization.
+# Data and Visualisation in BI
+Code and files related to the course Data and Visualisation in BI.
 
-This repository has files with commands, code snippets and guides to help you get a quick overview of the material we have been through in the first part of the course. The files and their content are
+This repository has files with commands, code snippets and guides to help you get a quick overview of the material we have been through in the second part of the course. The files and their content are
 
 1. [Basic Docker Commands.md](Basic%20Docker%20Commands.md): The Docker commands from the Docker I and Docker II slides, one line each
 2. [Code snippets by lecture slides.md](Code%20snippets%20by%20lecture%20slides.md): The code snippets used in class, ordered by slide set and slide number
