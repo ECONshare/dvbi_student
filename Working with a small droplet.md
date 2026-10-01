@@ -102,14 +102,14 @@ This is why you can remove an extension from the droplet and keep it on your lap
 >
 > ![The Container Tools extension by ms-azuretools in the Extensions view](images/container_tools.png)
 
-Keep only these three extensions on the droplet:
+We will keep only these three extensions on the droplet:
 
 | Extension | Why |
 |---|---|
 | **Container Tools** (by Microsoft) | Helps you write `Dockerfile` and `compose.yaml` files (colours, suggestions and error checks), and shows your containers, images and volumes in its Containers view |
 | **Docker Language Basics** and **YAML Language Basics** | Container Tools needs them, and they are installed together with it |
 
-**Remove every other extension from the droplet**, whatever it is. Which extensions you find there depends on your Positron version and on what you have installed yourself, so your list may differ from your fellow students' lists. Typically it contains Positron's standard extensions, for example Jupyter, Quarto and Ruff.
+The extensions you have depend on your Positron version and on what you have installed yourself, so your list may differ from your fellow students' lists. Typically it contains Positron's standard extensions, for example Jupyter, Quarto and Ruff.
 
 Positron's built-in extensions, for example its Python support and Git, are part of Positron. They are not listed among the installed extensions, and you cannot uninstall them.
 
