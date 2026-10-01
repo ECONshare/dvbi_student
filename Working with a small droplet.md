@@ -97,6 +97,11 @@ This is why you can remove an extension from the droplet and keep it on your lap
 
 ## 4. Which extensions to keep on the droplet
 
+> [!NOTE]
+> Before you go on, make sure that the extension **Container Tools** (by Microsoft) is installed on the droplet. If you have not installed it yet, open the Extensions view in the window that is connected to the droplet (`Ctrl+Shift+X` on Windows or `Cmd+Shift+X` on macOS), search for `Container Tools`, and click **Install**. If it is already installed on your laptop, the button says **Install in SSH: dvbi** instead. Its icon looks like this:
+>
+> ![The Container Tools extension by ms-azuretools in the Extensions view](images/container_tools.png)
+
 Keep only these three extensions on the droplet:
 
 | Extension | Why |
